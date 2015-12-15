@@ -25,16 +25,8 @@ $ gradle build
 
 ```
 
-gradle cleanTest test --tests com.walmart.tech.service.TicketServiceImplTest
+gradle cleanTest test --tests gradle test --tests *TicketServiceImplTest --debug
 
 ```
 
-
-## Run a particular Test Method only
-
-```
-
-cleanTest test --tests "com.walmart.tech.service.TicketServiceImplTest.testReserveSeatsGivingMinValueOnly"
-
-```
 
