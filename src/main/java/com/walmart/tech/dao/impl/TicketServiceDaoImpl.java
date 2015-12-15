@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
  */
 public class TicketServiceDaoImpl implements TicketServiceDao {
 
-    final Set<Seat> seats = new TreeSet<Seat>();
-    final List<SeatHold> seatsAtHold = new ArrayList<SeatHold>();
+    final Set<Seat> seats = Collections.synchronizedSet(new TreeSet<Seat>());
+    final List<SeatHold> seatsAtHold = Collections.synchronizedList(new ArrayList<SeatHold>());
 
 
     public TicketServiceDaoImpl() {
@@ -35,9 +35,11 @@ public class TicketServiceDaoImpl implements TicketServiceDao {
     @Override
     public List<Seat> seatsAvailableByMinAndMaxLevel(Optional<Integer> minVenueLevel, Optional<Integer> maxVenueLevel) {
         List<Seat> as = null;
-        if (minVenueLevel.isPresent() && maxVenueLevel.isPresent()) {
-            as = seats.stream().filter(seat -> seat.isAvailable() && seat.getSeatLevel() >= minVenueLevel.get() &&
-                    seat.getSeatLevel() <= maxVenueLevel.get()).collect(Collectors.toList());
+        final int minLevel = !minVenueLevel.isPresent() ? 1 : minVenueLevel.get();
+        final int maxLevel = !maxVenueLevel.isPresent() ? 4 : maxVenueLevel.get();
+        synchronized (seats) {
+            as = seats.stream().filter(seat -> seat.isAvailable() && seat.getSeatLevel() >= minLevel &&
+                    seat.getSeatLevel() <= maxLevel).collect(Collectors.toList());
 
         }
         return as;
@@ -46,7 +48,9 @@ public class TicketServiceDaoImpl implements TicketServiceDao {
 
     @Override
     public boolean reserve(SeatHold seatHold) {
-        return seatsAtHold.remove(seatHold);
+        synchronized (seatsAtHold) {
+            return seatsAtHold.remove(seatHold);
+        }
     }
 
 
