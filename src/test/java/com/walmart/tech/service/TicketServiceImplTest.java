@@ -51,4 +51,15 @@ public class TicketServiceImplTest {
         Assert.assertNull(confirmationCode);
 
     }
+
+    @Test
+    public void testHoldTime() throws Exception {
+        SeatHold seathHold = ticketService.findAndHoldSeats(50, Optional.of(1), Optional.of(2), "bdavay@walmart.com");
+        Assert.assertEquals(50, seathHold.getSeats().size());
+
+        Thread.sleep(6000);
+        // The hold time is set to 5 secs for testing purpose and once it crosses it cannot be reserved and returns null confirmation code
+        String confirmationCode = ticketService.reserveSeats(seathHold.getHoldId(), "bdavay@walmart.com");
+        Assert.assertNull(confirmationCode);
+    }
 }

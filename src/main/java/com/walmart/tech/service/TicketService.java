@@ -1,6 +1,7 @@
 package com.walmart.tech.service;
 
 import com.walmart.tech.domain.SeatHold;
+import com.walmart.tech.exception.ServiceException;
 
 import java.util.Optional;
 
@@ -16,7 +17,7 @@ public interface TicketService {
      * @return the number of tickets available on the provided level
      */
 
-    int numSeatsAvailable(Optional<Integer> venueLevel);
+    int numSeatsAvailable(Optional<Integer> venueLevel) throws ServiceException;
 
     /**
      * Find and hold the best available seats for a customer
@@ -32,7 +33,7 @@ public interface TicketService {
 
     SeatHold findAndHoldSeats(int numSeats, Optional<Integer> minLevel,
 
-                              Optional<Integer> maxLevel, String customerEmail);
+                              Optional<Integer> maxLevel, String customerEmail) throws ServiceException;
 
     /**
      * Commit seats held for a specific customer
@@ -44,6 +45,6 @@ public interface TicketService {
      * @return a reservation confirmation code
      */
 
-    String reserveSeats(int seatHoldId, String customerEmail);
+    String reserveSeats(int seatHoldId, String customerEmail) throws ServiceException;
 
 }

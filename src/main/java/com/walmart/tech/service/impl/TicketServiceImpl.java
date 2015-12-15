@@ -4,6 +4,7 @@ import com.walmart.tech.dao.TicketServiceDao;
 import com.walmart.tech.dao.impl.TicketServiceDaoImpl;
 import com.walmart.tech.domain.Seat;
 import com.walmart.tech.domain.SeatHold;
+import com.walmart.tech.exception.ServiceException;
 import com.walmart.tech.service.TicketService;
 
 import java.util.List;
@@ -19,7 +20,8 @@ public class TicketServiceImpl implements TicketService {
 
     Logger log = Logger.getLogger(TicketServiceImpl.class.getName());
 
-
+    // This is the data layer object to retrieve all the seats and reservation information
+    // TODO : This  can be later injected as a Repository using Spring Framework
     TicketServiceDao dao = new TicketServiceDaoImpl();
 
     /**
@@ -29,7 +31,7 @@ public class TicketServiceImpl implements TicketService {
      * @return the number of tickets available on the provided level
      */
     @Override
-    public int numSeatsAvailable(Optional<Integer> venueLevel) {
+    public int numSeatsAvailable(Optional<Integer> venueLevel) throws ServiceException {
         try {
             if (venueLevel.isPresent()) {
                 return dao.seatsAvailableByLevel(venueLevel);
@@ -37,7 +39,8 @@ public class TicketServiceImpl implements TicketService {
                 log.log(Level.SEVERE, "There is no venueLevel provided");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.log(Level.SEVERE, e.getLocalizedMessage());
+            throw new ServiceException(e);
         }
         return 0;
     }
@@ -54,7 +57,7 @@ public class TicketServiceImpl implements TicketService {
      * information
      */
     @Override
-    public SeatHold findAndHoldSeats(int numSeats, Optional<Integer> minLevel, Optional<Integer> maxLevel, String customerEmail) {
+    public SeatHold findAndHoldSeats(int numSeats, Optional<Integer> minLevel, Optional<Integer> maxLevel, String customerEmail) throws ServiceException {
 
         SeatHold seatHoldInfo = null;
 
@@ -65,7 +68,8 @@ public class TicketServiceImpl implements TicketService {
                 dao.addSeatHoldToList(seatHoldInfo);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.log(Level.SEVERE, e.getLocalizedMessage());
+            throw new ServiceException(e);
         }
 
         return seatHoldInfo;
@@ -81,7 +85,7 @@ public class TicketServiceImpl implements TicketService {
      * @return a reservation confirmation code
      */
     @Override
-    public String reserveSeats(int seatHoldId, String customerEmail) {
+    public String reserveSeats(int seatHoldId, String customerEmail) throws ServiceException {
 
         if (seatHoldId <= 0 || customerEmail == null) {
             return null;
@@ -95,7 +99,8 @@ public class TicketServiceImpl implements TicketService {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.log(Level.SEVERE, e.getLocalizedMessage());
+            throw new ServiceException(e);
 
         }
         return null;

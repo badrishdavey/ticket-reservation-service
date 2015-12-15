@@ -4,6 +4,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by bdavay on 12/15/15.
+ *
+ * This is the constant config class used to set the
+ * config parameters for the Ticketing service when it is been instantiated
+ *
+ *
  */
 public interface ServiceConfigConstant {
 
@@ -23,6 +28,8 @@ public interface ServiceConfigConstant {
     int LEVEL4_SEATS_PER_ROW = 100;
 
     int HOLD_1_HOUR = 1 * 60 * 60 * 1000; // 1 hour hold in millis
+
+    int HOLD_5_SECS = 5 * 1000;
 
     AtomicInteger HOLD_ID_GENERATOR = new AtomicInteger(1);
 

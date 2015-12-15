@@ -14,7 +14,12 @@ public class SeatHold {
     private long holdCreatedTime;
     private int holdId;
 
-
+    /**
+     * @param email
+     * @param holdCreatedTime
+     * @param seats           This constructor basically registers the seat hold information for a customer
+     *                        It marks all the available flags for the list of seats as false until the hold time
+     */
     public SeatHold(String email, long holdCreatedTime, List<Seat> seats) {
         this.email = email;
         this.holdCreatedTime = holdCreatedTime;
@@ -61,7 +66,7 @@ public class SeatHold {
     }
 
     public boolean isHoldValid(Long currentTime) {
-        return (currentTime - holdCreatedTime) <= ServiceConfigConstant.HOLD_1_HOUR;
+        return (currentTime - holdCreatedTime) <= ServiceConfigConstant.HOLD_5_SECS;
     }
 
 }
