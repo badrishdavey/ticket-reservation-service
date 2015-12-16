@@ -11,6 +11,11 @@ import java.util.stream.Collectors;
 
 /**
  * Created by bdavay on 12/15/15.
+ *
+ * This class serves as the data layer to get and persist the data from
+ * in-memory store .
+ *
+ * TODO :// This can be mofidied to use Spring MVC repository to store in some NOSql database like mongodb for low latency reads and writes
  */
 public class TicketServiceDaoImpl implements TicketServiceDao {
 
@@ -22,6 +27,13 @@ public class TicketServiceDaoImpl implements TicketServiceDao {
         instantiateSeats();
     }
 
+    /**
+     * @param venueLevel
+     * @return int
+     * <p>
+     * This checks if the venueLevel passed in is available and
+     * returns the size of the list using Java 8 lambda style functions
+     */
     @Override
     public int seatsAvailableByLevel(Optional<Integer> venueLevel) {
         if (venueLevel.isPresent()) {
@@ -32,6 +44,15 @@ public class TicketServiceDaoImpl implements TicketServiceDao {
     }
 
 
+    /**
+     * @param minVenueLevel
+     * @param maxVenueLevel
+     * @return List<Seat>
+     * This defaults the min and max level to lowest and highest levels if the min or max venue level
+     * are not passed in.
+     * <p>
+     * This also filters the seats which are available and within the range of min and max value
+     */
     @Override
     public List<Seat> seatsAvailableByMinAndMaxLevel(Optional<Integer> minVenueLevel, Optional<Integer> maxVenueLevel) {
         List<Seat> as = null;
@@ -45,7 +66,13 @@ public class TicketServiceDaoImpl implements TicketServiceDao {
         return as;
     }
 
-
+    /**
+     *
+     * @param seatHold
+     * @return boolean
+     *
+     * This function basically removes the particular seatHold from the holdList once the hold has been reserved
+     */
     @Override
     public boolean reserve(SeatHold seatHold) {
         synchronized (seatsAtHold) {
@@ -53,12 +80,27 @@ public class TicketServiceDaoImpl implements TicketServiceDao {
         }
     }
 
-
+    /**
+     *
+     * @param sh(SeatHold)
+     * This adds new seat hold everytime a new hold request
+     * is created
+     */
     @Override
     public void addSeatHoldToList(SeatHold sh) {
-        seatsAtHold.add(sh);
+        synchronized (seatsAtHold) {
+            seatsAtHold.add(sh);
+        }
     }
 
+    /**
+     *
+     * @param id
+     * @param email
+     * @return SeatHold
+     * This function searches for the hold list for a given hold id
+     * and email and returns back the seatHold object
+     */
     @Override
     public SeatHold getSeatHoldById(int id, String email) {
 
@@ -70,7 +112,12 @@ public class TicketServiceDaoImpl implements TicketServiceDao {
         return null;
     }
 
-
+    /**
+     * This method instantiates the TreeSet with all different levels of
+     * seat types as one time operation
+     *
+     * This is called only once by the constructor and never invoked after that.
+     */
     private void instantiateSeats() {
         createSeats(1);
         createSeats(2);
@@ -78,6 +125,13 @@ public class TicketServiceDaoImpl implements TicketServiceDao {
         createSeats(4);
     }
 
+    /**
+     *
+     * @param level
+     *
+     * This is a utility method which can handle creation of seats for each level
+     *
+     */
     private void createSeats(int level) {
         int maxSeats = 0;
         int currentSeats = seats.size();
