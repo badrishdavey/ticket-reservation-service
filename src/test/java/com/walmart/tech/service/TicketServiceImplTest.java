@@ -113,4 +113,63 @@ public class TicketServiceImplTest {
         Assert.assertEquals(ticketService.numSeatsAvailable(Optional.of(3)), 1200);
     }
 
+
+    @Test(priority = 9)
+    public void testReserveSeatsGivingMinValueOnlyWithBookingRemaining() throws Exception {
+        SeatHold seathHold = ticketService.findAndHoldSeats(1200, Optional.of(3), Optional.of(3), "bdavay@walmart.com");
+        Assert.assertEquals(seathHold.getSeats().size(), 1200);
+        //Reserve the seats which were in hold
+        String confirmationCode = ticketService.reserveSeats(seathHold.getHoldId(), "bdavay@walmart.com");
+        Assert.assertNotNull(confirmationCode);
+
+        //Expected seat counts drop by 50 for level 1
+        Assert.assertEquals(ticketService.numSeatsAvailable(Optional.of(3)), 0);
+
+    }
+
+
+    @Test(priority = 10)
+    public void testReserveSeatsWithOnlySpecificLevel() throws Exception {
+        ticketService = new TicketServiceImpl();
+        SeatHold seathHold = ticketService.findAndHoldSeats(1250, Optional.of(1), Optional.of(1), "bdavay@walmart.com");
+        Assert.assertEquals(seathHold.getSeats().size(), 1250);
+        //Reserve the seats which were in hold
+        String confirmationCode = ticketService.reserveSeats(seathHold.getHoldId(), "bdavay@walmart.com");
+        Assert.assertNotNull(confirmationCode);
+
+        //Expected seat counts drop by 50 for level 1
+        Assert.assertEquals(ticketService.numSeatsAvailable(Optional.of(1)), 0);
+
+
+        seathHold = ticketService.findAndHoldSeats(2000, Optional.of(2), Optional.of(2), "bdavay@walmart.com");
+        Assert.assertEquals(seathHold.getSeats().size(), 2000);
+        //Reserve the seats which were in hold
+        confirmationCode = ticketService.reserveSeats(seathHold.getHoldId(), "bdavay@walmart.com");
+        Assert.assertNotNull(confirmationCode);
+
+        //Expected seat counts drop by 50 for level 1
+        Assert.assertEquals(ticketService.numSeatsAvailable(Optional.of(2)), 0);
+
+
+        seathHold = ticketService.findAndHoldSeats(1500, Optional.of(3), Optional.of(3), "bdavay@walmart.com");
+        Assert.assertEquals(seathHold.getSeats().size(), 1500);
+        //Reserve the seats which were in hold
+        confirmationCode = ticketService.reserveSeats(seathHold.getHoldId(), "bdavay@walmart.com");
+        Assert.assertNotNull(confirmationCode);
+
+        //Expected seat counts drop by 50 for level 1
+        Assert.assertEquals(ticketService.numSeatsAvailable(Optional.of(3)), 0);
+
+
+        seathHold = ticketService.findAndHoldSeats(1500, Optional.of(4), Optional.of(4), "bdavay@walmart.com");
+        Assert.assertEquals(seathHold.getSeats().size(), 1500);
+        //Reserve the seats which were in hold
+        confirmationCode = ticketService.reserveSeats(seathHold.getHoldId(), "bdavay@walmart.com");
+        Assert.assertNotNull(confirmationCode);
+
+        //Expected seat counts drop by 50 for level 1
+        Assert.assertEquals(ticketService.numSeatsAvailable(Optional.of(4)), 0);
+
+    }
+
 }
