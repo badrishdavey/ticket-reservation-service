@@ -25,7 +25,7 @@ $ gradle build
 
 ```
 
-gradle cleanTest test --tests gradle test --tests *TicketServiceImplTest --debug
+gradle cleanTest test --tests *TicketServiceImplTest
 
 ```
 
